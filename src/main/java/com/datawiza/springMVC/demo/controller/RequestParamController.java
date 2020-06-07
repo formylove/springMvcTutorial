@@ -1,65 +1,73 @@
 package com.datawiza.springMVC.demo.controller;
 
 import com.datawiza.springMVC.demo.bean.Application;
-import org.springframework.web.bind.annotation.*;
+import com.datawiza.springMVC.demo.enumerate.Car;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.*;
 
 @RestController
-@RequestMapping("/rest/applications")
-public class RestfulController {
-    ///rest/applications/1
-    //path variable
-    @GetMapping("/{appId}")
-    public Application getApplication(@PathVariable("appId")Long appId){
-        Application bilibili = Application.builder().id(appId).name("bilibili").domain("bilibili.com").build();
-        return bilibili;
-    }
-
-    @PostMapping("")
-    public String getApplication(@RequestBody Application application){
-        return "{\"id\":2}";
+@RequestMapping("/req")
+public class RequestParamController {
+    @GetMapping("/boolean")
+    public String getMarriedStatus(@RequestParam(value = "married", defaultValue = "no") Boolean married) {
+        System.out.println("########################## " + married);
+        return "{\"status\":\"" + married + "\"}";
     }
 
 
-    @PutMapping("/{appId}")
-    public String updateApplication(@PathVariable("appId")Long appId,@RequestBody Application application){
-        System.out.println("########################## " + application);
-        return "{\"status\":\"OK\"}";
+    @GetMapping("/map")
+    public void getMarriedStatus(@RequestParam Map<String, String> info) {
+        info.entrySet().stream().forEach((entry) -> System.out.println("key︰" + entry.getKey() + " value︰" + entry.getValue()));
     }
 
-    @DeleteMapping("/{appId}")
-    public String deleteApplication(@PathVariable("appId")Long appId){
-        System.out.println("########################## " + appId);
-        return "{\"status\":\"OK\"}";
+    //参数两种格式︰
+    //{{host}}/req/list?roll=XiaoMing,Dennis
+    //{{host}}/req/list?roll=XiaoMing,roll=Dennis
+    @GetMapping("/list")
+    public void getRoll(@RequestParam List<String> roll) {
+        roll.stream().forEach((name) -> System.out.println("name︰" + name));
+    }
+
+    //大小写严格匹配
+
+    //POJO -> json -> map
+    @GetMapping("/enum")
+    public Car getRoll(@RequestParam Car car) {
+        return car;
+    }
+
+    @GetMapping("/list/enum")
+    public List<Car> getCars(@RequestParam List<Car> cars) {
+        return cars;
+    }
+
+    @GetMapping("/optional")
+    public Car getCar(@RequestParam Optional<Car> car) {
+        Car c = car.orElse(Car.JEEP);
+        return c;
+    }
+
+    @GetMapping("/no/optional")
+    public Car getCar(@RequestParam(required = false) Car car) {
+        return car;
     }
 
 
-    @PatchMapping("/{appId}/status")
-    public String setStatusOfApplication(@PathVariable("appId")Long appId,Boolean status){
-        System.out.println("########################## " + status);
-        return "{\"status\":\"OK\"}";
+
+    @GetMapping("/converter")
+    public Application getCar(Application application) {
+        return application;
     }
 
-    @GetMapping("/{appId}")
-    public List<Application> getApplications(@RequestParam(value = "pageNumber") Integer pageNumber,@RequestParam(value = "pageSize") Integer pageSize){
-        List<Application> applications = IntStream.range(0, 5).mapToObj((i) -> Application.builder().id(i + 0L).domain("cctv" + i + ".tv").name("中央" + i + "台").build()).collect(Collectors.toList());
-        return applications;
+    @GetMapping("/pojo")
+    public Application setCar(Application application) {
+        return application;
     }
 
-    @PostMapping("/{appId}")
-    public List<Application> getApplications(@RequestBody Search search){
-        List<Application> applications = IntStream.range(0, 5).mapToObj((i) -> Application.builder().id(i + 0L).domain("cctv" + i + ".tv").name("中央" + i + "台").build()).collect(Collectors.toList());
-        return applications;
-    }
 
-    static class Search{
-        Long start;
-        Long end;
-        Long minAmout;
-        String type;
-    }
 }

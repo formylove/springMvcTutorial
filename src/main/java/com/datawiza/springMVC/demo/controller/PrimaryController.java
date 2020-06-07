@@ -1,80 +1,47 @@
 package com.datawiza.springMVC.demo.controller;
 
-import com.datawiza.springMVC.demo.bean.Application;
-import com.datawiza.springMVC.demo.enumerate.Car;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Locale;
 
 @RestController
-@RequestMapping("/req")
-public class RequestParamController {
-    @GetMapping("/boolean")
-    public String getMarriedStatus(@RequestParam(value = "married", defaultValue = "no") Boolean married) {
-        System.out.println("########################## " + married);
-        return "{\"status\":\"" + married + "\"}";
-    }
+@RequestMapping("/primary")
+public class PrimaryController {
 
-
-    @GetMapping("/map")
-    public void getMarriedStatus(@RequestParam Map<String, String> info) {
-        info.entrySet().stream().forEach((entry) -> System.out.println("key︰" + entry.getKey() + " value︰" + entry.getValue()));
-    }
-
-    //参数两种格式︰
-    //{{host}}/req/list?roll=XiaoMing,Dennis
-    //{{host}}/req/list?roll=XiaoMing,roll=Dennis
-    @GetMapping("/list")
-    public void getRoll(@RequestParam List<String> roll) {
-        roll.stream().forEach((name) -> System.out.println("name︰" + name));
-    }
-
-    //大小写严格匹配
-
-    //POJO -> json -> map
-    @GetMapping("/enum")
-    public Car getRoll(@RequestParam Car car) {
-        return car;
-    }
-
-    @GetMapping("/list/enum")
-    public List<Car> getCars(@RequestParam List<Car> cars) {
-        return cars;
-    }
-
-    @GetMapping("/optional")
-    public Car getCar(@RequestParam Optional<Car> car) {
-        Car c = car.orElse(Car.JEEP);
-        return c;
-    }
-
-    @GetMapping("/no/optional")
-    public Car getCar(@RequestParam(required = false) Car car) {
-        return car;
-    }
-
-
-
-    @GetMapping("/converter")
-    public Application getCar(Application application) {
-        return application;
-    }
-
-    @GetMapping("/pojo")
-    public Application setCar(Application application) {
-        return application;
-    }
-
-//原生对象接收请求
-    @GetMapping("/primary")
+    //可以 en-Us
+    //不可以 en_us
+    @PatchMapping("/method/locale")
     public void setCar(HttpMethod httpMethod, Locale locale) {
-        System.out.println("########################## " +httpMethod.name());
-        System.out.println("########################## " +locale.toString());
+        System.out.println("########################## " + httpMethod.name());
+        System.out.println("########################## " + locale.toString());
     }
+
+
+    @PatchMapping(value = "/req/response",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value= HttpStatus.CREATED,reason = "an normal exception")
+    public void setCar(HttpServletRequest request, HttpServletResponse response, Writer out) throws IOException {
+        System.out.println("getRequestURL " + request.getRequestURL());
+        System.out.println("getRequestURI " + request.getRequestURI());
+        System.out.println("getPathInfo " + request.getPathInfo());
+        System.out.println("getQueryString " + request.getQueryString());
+        System.out.println("getMethod " + request.getMethod());
+        System.out.println("getHeader " + request.getHeader("accept-language"));
+
+        response.addHeader("status","bravo!");
+
+        out.write("Done is better than perfect");
+        System.out.println("########################## " +(out==request));
+        response.getWriter().write("十亿少女的梦");
+    }
+
+
 
 
 }

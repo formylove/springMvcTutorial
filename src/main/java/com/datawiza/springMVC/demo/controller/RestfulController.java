@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/rest/applications")
-public class RestfullController {
+public class RestfulController {
     ///rest/applications/1
     //path variable
     @GetMapping("/{appId}")
@@ -44,14 +44,14 @@ public class RestfullController {
         return "{\"status\":\"OK\"}";
     }
 
-    @GetMapping("/{appId}")
+    @GetMapping("/")
     public List<Application> getApplications(@RequestParam(value = "pageNumber") Integer pageNumber,@RequestParam(value = "pageSize") Integer pageSize){
         List<Application> applications = IntStream.range(0, 5).mapToObj((i) -> Application.builder().id(i + 0L).domain("cctv" + i + ".tv").name("中央" + i + "台").build()).collect(Collectors.toList());
         return applications;
     }
 
-    @PostMapping("/{appId}")
-    public List<Application> getApplications(@RequestBody Search search){
+    @PostMapping("/")
+    public List<Application> search(@RequestBody Search search){
         List<Application> applications = IntStream.range(0, 5).mapToObj((i) -> Application.builder().id(i + 0L).domain("cctv" + i + ".tv").name("中央" + i + "台").build()).collect(Collectors.toList());
         return applications;
     }

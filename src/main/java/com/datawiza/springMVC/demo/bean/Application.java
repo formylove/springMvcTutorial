@@ -1,4 +1,15 @@
 package com.datawiza.springMVC.demo.bean;
 
-public class Animal {
+import lombok.*;
+
+@Builder
+@Data//setter getter
+@ToString//lombok
+@NoArgsConstructor
+@AllArgsConstructor
+public class Application {
+    Long id;
+    String name;
+    String domain;
+    Boolean status;
 }
